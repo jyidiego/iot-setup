@@ -94,7 +94,7 @@ def create_iot_code_bucket(s3_client, sts_client):
     if bucket_name not in [ i['Name'] for i in s3_client.list_buckets()['Buckets']]:
         # return s3_client.create_bucket(Bucket="iot-code-{}".format(sts_client.get_caller_identity()['Account']))
         s3_client.create_bucket(Bucket=bucket_name, ACL='private')
-	s3_client.put_public_access_block( Bucket=bucket_name, \ 
+	s3_client.put_public_access_block( Bucket=bucket_name, \
                                            PublicAccessBlockConfiguration={ "BlockPublicAcls": True, \
                                                                             "BlockPublicPolicy": True, \
                                                                             "IgnorePublicAcls" : True, \
