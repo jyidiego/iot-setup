@@ -89,11 +89,16 @@ def create_certificates(client):
     return client.create_keys_and_certificate(setAsActive=True)
 
     
-def create_iot_code_bucket(s3_client, sts_client):
+def create_iot_code_bucket(s3_client, s3_ctl, sts_client):
     bucket_name = "iot-code-{}-1".format(sts_client.get_caller_identity()['Account'])
     if bucket_name not in [ i['Name'] for i in s3_client.list_buckets()['Buckets']]:
         # return s3_client.create_bucket(Bucket="iot-code-{}".format(sts_client.get_caller_identity()['Account']))
         s3_client.create_bucket(Bucket=bucket_name, ACL='private')
+	s3_ctl.put_public_access_block( PublicAccessBlockConfiguration={ "BlockPublicAcls": True, \
+                                                                        "BlockPublicPolicy": True, \
+                                                                        "IgnorePublicAcls" : True, \
+                                                                        "RestrictPublicBuckets" : True }, \
+                                        AccountId=sts_client.get_caller_identity()['Account'] )
         return bucket_name
     else:
         print("{}-1 already exists.".format(bucket_name))
@@ -148,7 +153,7 @@ def main():
 
     create_policy(client=boto3.client('iot', config=config), thing_group=thing_group)
     
-    bucket = create_iot_code_bucket(s3_client=boto3.client('s3', config=config), sts_client=boto3.client('sts', config=config))
+    bucket = create_iot_code_bucket(s3_client=boto3.client('s3', config=config), s3_ctl=boto3.client('s3control'), sts_client=boto3.client('sts', config=config))
     certificates = create_certificates(client=boto3.client('iot', config=config))
     attach_certificate(client=boto3.client('iot', config=config), thing=thing, certificates=certificates)
     upload_object_s3(   client=boto3.client('s3'), \
