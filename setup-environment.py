@@ -93,7 +93,7 @@ def create_iot_code_bucket(s3_client, sts_client):
     bucket_name = "iot-code-{}-1".format(sts_client.get_caller_identity()['Account'])
     if bucket_name not in [ i['Name'] for i in s3_client.list_buckets()['Buckets']]:
         # return s3_client.create_bucket(Bucket="iot-code-{}".format(sts_client.get_caller_identity()['Account']))
-        s3_client.create_bucket(Bucket=bucket_name)
+        s3_client.create_bucket(Bucket=bucket_name, ACL='private')
         return bucket_name
     else:
         print("{}-1 already exists.".format(bucket_name))
@@ -106,6 +106,7 @@ def transform_certificate(certificate):
 
 
 def generate_aws_iot_certs(certificates):
+    print("Certificates: {}".format(certificates)
     # Use current directory for templates
     file_loader = FileSystemLoader('.')
     # load environment
