@@ -106,7 +106,7 @@ def transform_certificate(certificate):
 
 
 def generate_aws_iot_certs(certificates):
-    print("Certificates: {}".format(certificates)
+    print("Certificates: {}".format(certificates))
     # Use current directory for templates
     file_loader = FileSystemLoader('.')
     # load environment
